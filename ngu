@@ -1,0 +1,98 @@
+
+> load("C:/Users/admin/Downloads/Cluster_1_RegionEastAsiaPacific (29).RData")
+> View(student_data)
+> cluster1 <- student_data
+> View (cluster1)
+> summary(cluster1)
+str(cluster1)
+colSums(is.na(cluster1))
+ sapply(cluster1[c("forest", "fertility", "life_exp", "pop_growth")],
++        sd, na.rm = TRUE)
+# Draw histogram
+library(ggplot2)
+> ggplot(cluster1, aes(x = pop_growth)) +
++     
++     geom_histogram(
++         binwidth = 0.9,
++         boundary = 0,
++         fill = "skyblue",
++         color = "black"
++     ) +
++     
++     # Show individual observations
++     geom_rug(
++         sides = "b",
++         alpha = 0.35
++     ) +
++     
++     # Add mean and median reference lines
++     geom_vline(
++         data = growth_stats,
++         aes(
++             xintercept = Value,
++             colour = Statistic,
++             linetype = Statistic
++         ),
++         linewidth = 1,
++         inherit.aes = FALSE
++     ) +
++     
++     scale_colour_manual(
++         values = c(
++             "Mean" = "red",
++             "Median" = "blue"
++         )
++     ) +
++     
++     scale_linetype_manual(
++         values = c(
++             "Mean" = "dashed",
++             "Median" = "solid"
++         )
++     ) +
++     
++     labs(
++         title = "Distribution of Annual Population Growth",
++         x = "Annual population growth (%)",
++         y = "Number of countries",
++         colour = NULL,
++         linetype = NULL
++     ) +
++     
++     theme_minimal() +
++     
++     theme(
++         legend.position = "top",
++         plot.title = element_text(
++             face = "bold",
++             size = 14
++         )
++     )
+mu_exp <- mean(cluster1$life_exp)
+> ssd_exp <- sd(cluster1$life_exp)
+> n<-nrow(cluster1)
+> se <- ssd_exp/sqrt(n)
+> se
+qt(0.975,n-1)
+CI <- t*se
+> lower_lim <- mu_exp - CI
+> upper_lim <- mu_exp + CI
+lower_lim
+
+> upper_lim
+hypomu <- 2.1
+> fertility_mu <-mean(cluster1$fertility)
+> ssd_fertility <- sd(cluster1$fertility)
+> se_fertility <- ssd_fertility /sqrt(n)
+> t_fertility <- (fertility_mu - hypomu )/se_fertility
+> t_fertility
+pt(t_fertility, n-1)
+
+> 2 * pt(-abs(t_fertility), n-1)
+
+library(e1071)
+skewness(cluster1$pop_growth, na.rm = TRUE, type = 2)
+
+> skewness(cluster1$life_exp, na.rm = TRUE, type = 2)
+
+> skewness(cluster1$fertility, na.rm = TRUE, type = 2)
